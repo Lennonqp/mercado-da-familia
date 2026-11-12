@@ -1,7 +1,7 @@
 {
   "name": "Mercado da Família",
   "short_name": "Mercado",
-  "description": "Lista de compras, carrinho, despensa, cardápio, tarefas e gastos da família.",
+  "description": "Lista de compras, carrinho, despensa, gastos e recados da família.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

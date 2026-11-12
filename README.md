@@ -13,8 +13,6 @@ Um site para a família organizar a casa, feito para usar no celular.
 
 **Mais para a família**
 
-- **Cardápio da semana**: almoço e jantar de cada dia.
-- **Tarefas da casa**: quem faz o quê. Tarefas marcadas como "toda semana" voltam sozinhas toda segunda-feira.
 - **Gastos do mercado**: o total de cada compra, a soma do mês e uma meta mensal.
 - **Recados**: avisos rápidos para todo mundo ver.
 
@@ -42,7 +40,7 @@ O Firebase é um banco de dados do Google. O plano gratuito é mais do que sufic
      match /databases/{database}/documents {
        match /familias/{familia}/{colecao}/{item} {
          allow read, write: if colecao in
-           ['compras', 'despensa', 'gastos', 'tarefas', 'recados', 'cardapio', 'ajustes'];
+           ['compras', 'despensa', 'gastos', 'recados', 'ajustes'];
        }
      }
    }

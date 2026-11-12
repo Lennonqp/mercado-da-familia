@@ -5,7 +5,7 @@
 (function () {
   "use strict";
 
-  const COLECOES = ["compras", "despensa", "gastos", "tarefas", "recados", "cardapio", "ajustes"];
+  const COLECOES = ["compras", "despensa", "gastos", "recados", "ajustes"];
   const VERSAO_FIREBASE = "10.12.2";
   const novoId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 

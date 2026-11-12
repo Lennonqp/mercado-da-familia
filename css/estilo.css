@@ -256,16 +256,6 @@ h1 { margin: 6px 0 0; font: 800 38px/1 var(--titulo); letter-spacing: -.01em; te
 .ajuste b { display: block; font-weight: 800; }
 .ajuste small { color: var(--tinta-fraca); font-size: 13.5px; font-weight: 600; }
 
-/* cardápio */
-.dia { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; }
-.dia-t { display: flex; align-items: center; gap: 8px; font: 800 19px var(--titulo); }
-.dia.hoje { border-color: var(--tinta); border-width: 2px; }
-.dia .hoje-e { font: 800 12px var(--texto); background: var(--sol); color: #1a2238; padding: 2px 9px; border-radius: 99px; }
-.refeicao { display: flex; align-items: center; gap: 10px; background: var(--afundado); border-radius: 12px; padding: 0 12px; }
-.refeicao label { flex: none; width: 58px; font-size: 13px; font-weight: 800; color: var(--tinta-fraca); }
-.refeicao input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 12px 0; font-weight: 700; outline: none; }
-.refeicao:focus-within { outline: 2px solid var(--tinta); }
-
 /* recados */
 .bilhete { background: var(--sol-suave); border-radius: 4px 18px 18px 18px; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; }
 .bilhete div { flex: 1; min-width: 0; }
@@ -320,8 +310,6 @@ h1 { margin: 6px 0 0; font: 800 38px/1 var(--titulo); letter-spacing: -.01em; te
 .conta input::-webkit-inner-spin-button, .conta input::-webkit-outer-spin-button { -webkit-appearance: none; }
 .folha-acoes { display: flex; gap: 10px; margin-top: 4px; }
 .folha-acoes .perigo { flex: 0 0 auto; width: auto; padding-inline: 18px; }
-.alterna { display: flex; align-items: center; gap: 12px; font-weight: 700; }
-.alterna input { width: 22px; height: 22px; accent-color: var(--folha); }
 
 /* aviso rápido */
 .recado-rapido {

@@ -1,5 +1,5 @@
 /* Mercado da Família: telas e ações.
-   Lista de compras → carrinho → em casa, mais cardápio, tarefas, gastos e recados. */
+   Lista de compras → carrinho → em casa, mais gastos e recados. */
 (function () {
   "use strict";
 
@@ -33,13 +33,11 @@
   };
   const UNIDADE_COMUM = { arroz: "kg", feijao: "kg", acucar: "kg", farinha: "kg", carne: "kg", frango: "kg", batata: "kg", tomate: "kg", cebola: "kg", banana: "kg", leite: "L", ovos: "dz", ovo: "dz", cafe: "pct" };
   const APELIDO_UNIDADE = { l: "L", litro: "L", litros: "L", quilo: "kg", quilos: "kg", kg: "kg", g: "g", ml: "ml", un: "un", unidade: "un", unidades: "un", pct: "pct", pacote: "pct", pacotes: "pct", cx: "cx", caixa: "cx", caixas: "cx", dz: "dz", duzia: "dz", duzias: "dz", lata: "lata", latas: "lata", garrafa: "garrafa", garrafas: "garrafa" };
-  const DIAS = [["dom", "Domingo"], ["seg", "Segunda"], ["ter", "Terça"], ["qua", "Quarta"], ["qui", "Quinta"], ["sex", "Sexta"], ["sab", "Sábado"]];
-
   const TELAS = {
     lista: "Lista de compras", carrinho: "Carrinho", casa: "Em casa", mais: "Nossa casa",
-    cardapio: "Cardápio da semana", tarefas: "Tarefas da casa", gastos: "Gastos do mercado", recados: "Recados"
+    gastos: "Gastos do mercado", recados: "Recados"
   };
-  const SUBTELAS = ["cardapio", "tarefas", "gastos", "recados"];
+  const SUBTELAS = ["gastos", "recados"];
 
   /* ================= utilidades ================= */
   const $ = s => document.querySelector(s);
@@ -61,7 +59,6 @@
   const dataDeISO = iso => { const [a, m, d] = String(iso).split("-").map(Number); return new Date(a, (m || 1) - 1, d || 1); };
   const diasAte = iso => Math.round((dataDeISO(iso) - dataDeISO(hojeISO())) / 86400000);
   const dataCurta = iso => dataDeISO(iso).toLocaleDateString("pt-BR", { day: "numeric", month: "short" });
-  function inicioDaSemana() { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); }
   function quando(ms) {
     const d = new Date(ms), hora = d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
     const dias = Math.round((dataDeISO(hojeISO()) - dataDeISO(isoDe(d))) / 86400000);
@@ -78,8 +75,6 @@
     listaMais: '<svg viewBox="0 0 24 24"><path d="M4 6h12M4 12h8M4 18h8"/><path d="M18 11v8M14 15h8"/></svg>',
     lista: '<svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3.5 6 1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2"/></svg>',
     casa: '<svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg>',
-    prato: '<svg viewBox="0 0 24 24"><circle cx="13" cy="12" r="7"/><circle cx="13" cy="12" r="3"/><path d="M3 4v7M3 14v6"/></svg>',
-    tarefa: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>',
     moeda: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M14.5 9.5c-.5-1-1.400-1.500-2.500-1.500-1.500 0-2.500.8-2.500 2s1 1.700 2.500 2 2.500.8 2.500 2-1 2-2.500 2c-1.200 0-2.100-.5-2.600-1.500M12 6.500v11"/></svg>',
     recado: '<svg viewBox="0 0 24 24"><path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-7l-4.500 4v-4H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/></svg>',
     pessoa: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.500 20c1-3.500 4-5 7.500-5s6.500 1.500 7.500 5"/></svg>',
@@ -143,13 +138,7 @@
   const paraRepor = () => D.despensa.filter(situacao);
   const jaNaLista = nome => { const n = norm(nome); return D.compras.some(c => norm(c.nome) === n); };
   const conhecido = nome => { const n = norm(nome); return D.despensa.find(d => norm(d.nome) === n) || D.compras.find(c => norm(c.nome) === n); };
-  const tarefaFeita = t => !!t.feita && (!t.repete || (t.feitaEm || 0) >= inicioDaSemana());
   const metaMensal = () => num((D.ajustes.find(a => a.id === "geral") || {}).meta);
-  function pessoas() {
-    const nomes = [meuNome, ...D.tarefas.map(t => t.responsavel), ...D.compras.map(c => c.por), ...D.recados.map(r => r.por), ...D.gastos.map(g => g.por)];
-    return [...new Set(nomes.filter(Boolean))];
-  }
-
   /* ================= avisos ================= */
   let relogioToast;
   function toast(msg, desfazer) {
@@ -239,7 +228,7 @@
     const foco = document.activeElement;
     if (foco && foco.matches && foco.matches("[data-vivo]")) return;
 
-    ({ lista: renderLista, carrinho: renderCarrinho, casa: renderCasa, mais: renderMais, cardapio: renderCardapio, tarefas: renderTarefas, gastos: renderGastos, recados: renderRecados })[tela]();
+    ({ lista: renderLista, carrinho: renderCarrinho, casa: renderCasa, mais: renderMais, gastos: renderGastos, recados: renderRecados })[tela]();
 
     const nomes = [...new Set([...D.despensa, ...D.compras].map(i => i.nome))].sort((a, b) => a.localeCompare(b, "pt-BR"));
     $("#conhecidos").innerHTML = nomes.map(n => `<option value="${esc(n)}">`).join("");
@@ -251,8 +240,6 @@
       case "carrinho": return carrinho.length ? `<b>${carrinho.length} de ${lista.length + carrinho.length}</b> produtos pegos` : "Vazio por enquanto";
       case "casa": return D.despensa.length ? `<b>${plural(D.despensa.length, "produto", "produtos")}</b>${repor.length ? `, ${repor.length} para repor` : ""}` : "Nada registrado ainda";
       case "mais": return meuNome ? `Olá, <b>${esc(meuNome)}</b>` : "Ferramentas da família";
-      case "cardapio": return "O que vai ter para comer";
-      case "tarefas": { const n = D.tarefas.filter(t => !tarefaFeita(t)).length; return n ? `<b>${plural(n, "tarefa", "tarefas")}</b> para fazer` : "Tudo em dia"; }
       case "gastos": return "Quanto a casa gasta por mês";
       case "recados": return D.recados.length ? plural(D.recados.length, "recado", "recados") : "Nenhum recado";
     }
@@ -382,10 +369,6 @@
 
   /* ---------- mais ---------- */
   function renderMais() {
-    const hoje = DIAS[new Date().getDay()][0];
-    const cardapioHoje = D.cardapio.find(c => c.id === hoje) || {};
-    const pratos = [cardapioHoje.almoco, cardapioHoje.jantar].filter(Boolean);
-    const pendentes = D.tarefas.filter(t => !tarefaFeita(t)).length;
     const mesAtual = hojeISO().slice(0, 7);
     const gastoMes = D.gastos.filter(g => String(g.data).startsWith(mesAtual)).reduce((s, g) => s + num(g.total), 0);
     const ultimo = D.recados.slice().sort((a, b) => b.criadoEm - a.criadoEm)[0];
@@ -393,8 +376,6 @@
 
     $("#mais").innerHTML = `<div class="pilha">
       <div class="atalhos">
-        ${atalho("cardapio", "--c-padaria", IC.prato, "Cardápio", pratos.length ? `Hoje: ${esc(pratos.join(" e "))}` : "Planeje as refeições da semana")}
-        ${atalho("tarefas", "--c-frios", IC.tarefa, "Tarefas", pendentes ? `${plural(pendentes, "tarefa", "tarefas")} para fazer` : "Divida as tarefas da casa")}
         ${atalho("gastos", "--c-horti", IC.moeda, "Gastos", gastoMes ? `${reais(gastoMes)} neste mês` : "Acompanhe os gastos do mês")}
         ${atalho("recados", "--c-higiene", IC.recado, "Recados", ultimo ? `${esc(ultimo.por || "Alguém")}: ${esc(ultimo.texto)}` : "Deixe recados para a família")}
       </div>
@@ -404,44 +385,6 @@
         <button class="ajuste" data-acao="importar">${IC.subir}<div><b>Trazer uma cópia guardada</b><small>Recupera os dados de um arquivo baixado antes</small></div></button>
         <div class="ajuste">${IC.nuvem}<div><b>${banco && banco.modo === "nuvem" ? "Compartilhado com a família" : "Salvo só neste aparelho"}</b><small>${banco && banco.modo === "nuvem" ? `Código da família: ${esc(CFG.codigoFamilia || "")}` : "Para compartilhar entre os celulares, configure o Firebase (veja o README)"}</small></div></div>
       </div>
-    </div>`;
-  }
-
-  /* ---------- cardápio ---------- */
-  function renderCardapio() {
-    const hoje = new Date().getDay();
-    const ordem = [...DIAS.slice(hoje), ...DIAS.slice(0, hoje)];
-    const temAlgo = D.cardapio.some(c => c.almoco || c.jantar);
-    $("#cardapio").innerHTML = `<div class="pilha">${ordem.map(([id, nome], i) => {
-      const c = D.cardapio.find(x => x.id === id) || {};
-      const campo = (ref, rotulo) => `<div class="refeicao"><label for="c-${id}-${ref}">${rotulo}</label><input data-vivo id="c-${id}-${ref}" data-dia="${id}" data-ref="${ref}" value="${esc(c[ref] || "")}" placeholder="Toque para escrever" maxlength="80"></div>`;
-      return `<div class="bloco dia ${i === 0 ? "hoje" : ""}">
-        <div class="dia-t">${nome}${i === 0 ? '<span class="hoje-e">hoje</span>' : ""}</div>
-        ${campo("almoco", "Almoço")}${campo("jantar", "Jantar")}
-      </div>`;
-    }).join("")}
-    ${temAlgo ? `<button class="bt claro" data-acao="limpar-cardapio">Limpar a semana</button>` : ""}</div>`;
-  }
-
-  /* ---------- tarefas ---------- */
-  function renderTarefas() {
-    const box = $("#tarefas");
-    if (!pronto.tarefas) { box.innerHTML = espera("Carregando…"); return; }
-    if (!D.tarefas.length) { box.innerHTML = vazio(IC.tarefa, "Nenhuma tarefa", "Escreva uma tarefa acima. Depois toque nela para escolher quem faz e se repete toda semana."); return; }
-    const ordem = (a, b) => (a.criadoEm || 0) - (b.criadoEm || 0);
-    const abertas = D.tarefas.filter(t => !tarefaFeita(t)).sort(ordem), feitas = D.tarefas.filter(tarefaFeita).sort(ordem);
-    const linha = t => {
-      const feita = tarefaFeita(t);
-      const info = [t.responsavel ? esc(t.responsavel) : "Sem responsável", t.repete ? "toda semana" : ""].filter(Boolean).join(", ");
-      return `<div class="linha ${feita ? "ok" : ""}">
-        <button class="marca ${feita ? "feita" : ""}" data-acao="marcar-tarefa" data-id="${t.id}" aria-label="${feita ? "Desmarcar" : "Marcar como feita"}: ${esc(t.titulo)}">${IC.certo}</button>
-        <button class="linha-txt" data-acao="editar-tarefa" data-id="${t.id}"><b>${esc(t.titulo)}</b><small>${info}</small></button>
-      </div>`;
-    };
-    box.innerHTML = `<div class="pilha">
-      ${abertas.length ? `<section class="grupo">${tituloGrupo("Para fazer", abertas.length, "--c-frios")}<div class="bloco">${abertas.map(linha).join("")}</div></section>` : espera("Tudo feito por aqui.")}
-      ${feitas.length ? `<section class="grupo">${tituloGrupo("Feitas", feitas.length, "--folha")}<div class="bloco">${feitas.map(linha).join("")}</div></section>` : ""}
-      ${feitas.some(t => !t.repete) ? `<button class="bt claro" data-acao="limpar-tarefas">Apagar as tarefas feitas</button>` : ""}
     </div>`;
   }
 
@@ -624,30 +567,9 @@
       async v => { fecharFolha(); if (await seguro(banco.definir("ajustes", "geral", { meta: lerDinheiro(v.meta) }))) toast("Meta salva"); });
   }
 
-  function folhaTarefa(t) {
-    abrirFolha("Editar tarefa", `
-      <label class="campo"><span class="rot">Tarefa</span><input class="ent" name="titulo" value="${esc(t.titulo)}" required maxlength="80"></label>
-      <div class="campo"><span class="rot">Quem faz</span>${pessoas().length ? grupoFichas("responsavel", pessoas(), t.responsavel || "", true) : '<input type="hidden" name="responsavel" value="">'}
-        <input class="ent" name="outro" placeholder="${pessoas().length ? "Ou escreva outro nome" : "Nome de quem faz"}" maxlength="30"></div>
-      <label class="alterna"><input type="checkbox" name="repete" ${t.repete ? "checked" : ""}>Repetir toda semana</label>
-      <p class="nota">Tarefas que repetem voltam para “Para fazer” toda segunda-feira.</p>
-      ${acoesFolha("Salvar", true)}`,
-      async v => {
-        const titulo = String(v.titulo || "").trim(); if (!titulo) return;
-        const dados = { titulo, responsavel: String(v.outro || "").trim() || v.responsavel || "", repete: !!v.repete };
-        fecharFolha();
-        if (await seguro(banco.alterar("tarefas", t.id, dados))) toast("Tarefa salva");
-      });
-    ligarApagar(async () => {
-      fecharFolha();
-      const { id, ...copia } = t;
-      if (await seguro(banco.apagar("tarefas", id))) toast("Tarefa apagada", () => seguro(banco.criar("tarefas", copia)));
-    });
-  }
-
   function folhaNome() {
     abrirFolha("Seu nome", `
-      <p class="nota">Aparece para a família nos pedidos, tarefas e recados feitos neste aparelho.</p>
+      <p class="nota">Aparece para a família nos pedidos, gastos e recados feitos neste aparelho.</p>
       <label class="campo"><span class="rot">Como você se chama?</span><input class="ent" name="nome" value="${esc(meuNome)}" maxlength="30" data-foco></label>
       ${acoesFolha("Salvar")}`,
       v => {
@@ -698,13 +620,6 @@
   $("#rapido-casa").addEventListener("submit", e => { e.preventDefault(); registrarEmCasa(); });
   $("#busca-casa").addEventListener("input", e => { buscaCasa = e.target.value; render(); });
 
-  $("#rapido-tarefa").addEventListener("submit", async e => {
-    e.preventDefault(); if (!banco) return;
-    const campo = $("#nova-tarefa"), titulo = campo.value.trim();
-    if (!titulo) { campo.focus(); return; }
-    campo.value = ""; campo.focus();
-    await seguro(banco.criar("tarefas", { titulo: maiuscula(titulo), responsavel: "", repete: false, feita: false, criadoEm: Date.now() }));
-  });
   $("#rapido-recado").addEventListener("submit", async e => {
     e.preventDefault(); if (!banco) return;
     const campo = $("#novo-recado"), texto = campo.value.trim();
@@ -713,15 +628,11 @@
     await seguro(banco.criar("recados", { texto, por: meuNome, criadoEm: Date.now() }));
   });
 
-  // campos que salvam ao sair deles (preço no carrinho e cardápio)
+  // preço no carrinho: salva ao sair do campo
   document.addEventListener("change", async e => {
     const el = e.target; if (!banco) return;
     if (el.dataset.preco) {
       await seguro(banco.alterar("compras", el.dataset.preco, { preco: lerDinheiro(el.value) }));
-    } else if (el.dataset.dia) {
-      const atual = D.cardapio.find(c => c.id === el.dataset.dia) || {};
-      const { id, ...resto } = atual;
-      await seguro(banco.definir("cardapio", el.dataset.dia, { almoco: "", jantar: "", ...resto, [el.dataset.ref]: el.value.trim() }));
     }
   });
   document.addEventListener("focusout", e => { if (e.target.matches && e.target.matches("[data-vivo]")) setTimeout(render, 0); });
@@ -769,17 +680,6 @@
       case "finalizar": folhaFinalizar(); break;
       case "filtro-casa": filtroCasa = el.dataset.valor; render(); break;
       case "registrar-casa": registrarEmCasa(); break;
-
-      case "marcar-tarefa": { const t = D.tarefas.find(x => x.id === id); if (t) await seguro(banco.alterar("tarefas", id, { feita: !tarefaFeita(t), feitaEm: Date.now() })); break; }
-      case "editar-tarefa": { const t = D.tarefas.find(x => x.id === id); if (t) folhaTarefa(t); break; }
-      case "limpar-tarefas": el.disabled = true; for (const t of D.tarefas.filter(t => tarefaFeita(t) && !t.repete)) await seguro(banco.apagar("tarefas", t.id)); break;
-
-      case "limpar-cardapio": {
-        const copia = D.cardapio.map(c => ({ ...c }));
-        for (const c of copia) await seguro(banco.apagar("cardapio", c.id));
-        toast("Cardápio limpo", async () => { for (const { id: dia, ...resto } of copia) await seguro(banco.definir("cardapio", dia, resto)); });
-        break;
-      }
 
       case "novo-gasto": folhaGasto(); break;
       case "editar-gasto": { const g = D.gastos.find(x => x.id === id); if (g) folhaGasto(g); break; }
