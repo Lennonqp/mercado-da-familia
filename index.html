@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mercado da Família</title>
+  <meta name="description" content="Lista de compras, carrinho, despensa, cardápio, tarefas e gastos da família em um só lugar.">
+  <meta name="theme-color" content="#ffc83a" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#161b2b" media="(prefers-color-scheme: dark)">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icone.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icone.svg">
+  <link rel="preload" href="fontes/baloo-2.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fontes/nunito-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+
+  <header class="topo">
+    <div class="topo-in">
+      <div class="topo-linha">
+        <button class="voltar" id="voltar" type="button" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>Mais
+        </button>
+        <span class="casa" id="casa-nome">Casa da Família</span>
+        <span class="sinal" id="sinal" role="status"><i></i><span id="sinal-txt">Conectando</span></span>
+      </div>
+      <h1 id="titulo">Lista de compras</h1>
+      <p class="resumo" id="resumo"></p>
+    </div>
+    <div class="toldo" aria-hidden="true"></div>
+  </header>
+
+  <main class="miolo" id="miolo">
+    <div class="aviso" id="aviso" hidden></div>
+
+    <!-- Lista de compras -->
+    <section class="tela" id="tela-lista">
+      <form class="rapido" id="rapido-lista" autocomplete="off">
+        <label class="so-leitor" for="novo-produto">Adicionar produto à lista</label>
+        <input id="novo-produto" list="conhecidos" placeholder="Adicionar produto" maxlength="60" enterkeyhint="done">
+        <button type="submit" aria-label="Adicionar à lista"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+      </form>
+      <datalist id="conhecidos"></datalist>
+      <div id="sugestoes"></div>
+      <div id="lista"></div>
+      <div id="lista-rodape"></div>
+    </section>
+
+    <!-- Carrinho -->
+    <section class="tela" id="tela-carrinho" hidden>
+      <div id="carrinho"></div>
+    </section>
+
+    <!-- Em casa -->
+    <section class="tela" id="tela-casa" hidden>
+      <form class="rapido busca" id="rapido-casa" autocomplete="off">
+        <label class="so-leitor" for="busca-casa">Buscar ou registrar produto em casa</label>
+        <svg class="lupa" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="busca-casa" placeholder="Buscar ou registrar produto" maxlength="60" enterkeyhint="search">
+      </form>
+      <div class="filtros" id="filtros-casa" role="group" aria-label="Filtrar"></div>
+      <div id="casa"></div>
+    </section>
+
+    <!-- Mais -->
+    <section class="tela" id="tela-mais" hidden>
+      <div id="mais"></div>
+    </section>
+
+    <!-- Cardápio -->
+    <section class="tela" id="tela-cardapio" hidden>
+      <div id="cardapio"></div>
+    </section>
+
+    <!-- Tarefas -->
+    <section class="tela" id="tela-tarefas" hidden>
+      <form class="rapido" id="rapido-tarefa" autocomplete="off">
+        <label class="so-leitor" for="nova-tarefa">Nova tarefa</label>
+        <input id="nova-tarefa" placeholder="Nova tarefa" maxlength="80" enterkeyhint="done">
+        <button type="submit" aria-label="Adicionar tarefa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+      </form>
+      <div id="tarefas"></div>
+    </section>
+
+    <!-- Gastos -->
+    <section class="tela" id="tela-gastos" hidden>
+      <div id="gastos"></div>
+    </section>
+
+    <!-- Recados -->
+    <section class="tela" id="tela-recados" hidden>
+      <form class="rapido" id="rapido-recado" autocomplete="off">
+        <label class="so-leitor" for="novo-recado">Novo recado</label>
+        <input id="novo-recado" placeholder="Deixar um recado para a família" maxlength="200" enterkeyhint="send">
+        <button type="submit" aria-label="Enviar recado"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </form>
+      <div id="recados"></div>
+    </section>
+  </main>
+
+  <div class="acao-fixa" id="acao-fixa" hidden></div>
+
+  <nav class="barra" aria-label="Seções">
+    <button data-ir="lista" id="aba-lista">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3.5 6 1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2"/></svg><b class="selo" id="selo-lista" hidden></b></span>
+      <span>Lista</span>
+    </button>
+    <button data-ir="carrinho" id="aba-carrinho">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.2 10.4a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6.2"/><circle cx="9.5" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg><b class="selo" id="selo-carrinho" hidden></b></span>
+      <span>Carrinho</span>
+    </button>
+    <button data-ir="casa" id="aba-casa">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4l8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg><b class="selo alerta" id="selo-casa" hidden></b></span>
+      <span>Em casa</span>
+    </button>
+    <button data-ir="mais" id="aba-mais">
+      <span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg><b class="selo" id="selo-mais" hidden></b></span>
+      <span>Mais</span>
+    </button>
+  </nav>
+
+  <div class="fundo-folha" id="fundo-folha" hidden></div>
+  <form class="folha" id="folha" hidden autocomplete="off" novalidate></form>
+
+  <div class="recado-rapido" id="toast" role="status" aria-live="polite">
+    <span id="toast-txt"></span><button type="button" id="toast-acao" hidden>Desfazer</button>
+  </div>
+
+  <input type="file" id="arquivo-backup" accept="application/json,.json" hidden>
+
+  <script src="config.js"></script>
+  <script src="js/dados.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

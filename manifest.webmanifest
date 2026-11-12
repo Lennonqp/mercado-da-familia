@@ -1,0 +1,12 @@
+{
+  "name": "Mercado da Família",
+  "short_name": "Mercado",
+  "description": "Lista de compras, carrinho, despensa, cardápio, tarefas e gastos da família.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f5f9",
+  "theme_color": "#ffc83a",
+  "lang": "pt-BR",
+  "icons": [{ "src": "icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
