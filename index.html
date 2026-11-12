@@ -36,11 +36,13 @@
 
     <!-- Lista de compras -->
     <section class="tela" id="tela-lista">
+      <div class="grudado">
       <form class="rapido" id="rapido-lista" autocomplete="off">
         <label class="so-leitor" for="novo-produto">Adicionar produto à lista</label>
         <input id="novo-produto" list="conhecidos" placeholder="Adicionar produto" maxlength="60" enterkeyhint="done">
         <button type="submit" aria-label="Adicionar à lista"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
       </form>
+      </div>
       <datalist id="conhecidos"></datalist>
       <div id="sugestoes"></div>
       <div id="lista"></div>
@@ -54,12 +56,14 @@
 
     <!-- Em casa -->
     <section class="tela" id="tela-casa" hidden>
+      <div class="grudado">
       <form class="rapido busca" id="rapido-casa" autocomplete="off">
         <label class="so-leitor" for="busca-casa">Buscar ou registrar produto em casa</label>
         <svg class="lupa" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input id="busca-casa" placeholder="Buscar ou registrar produto" maxlength="60" enterkeyhint="search">
       </form>
       <div class="filtros" id="filtros-casa" role="group" aria-label="Filtrar"></div>
+      </div>
       <div id="casa"></div>
     </section>
 
@@ -75,11 +79,13 @@
 
     <!-- Recados -->
     <section class="tela" id="tela-recados" hidden>
+      <div class="grudado">
       <form class="rapido" id="rapido-recado" autocomplete="off">
         <label class="so-leitor" for="novo-recado">Novo recado</label>
         <input id="novo-recado" placeholder="Deixar um recado para a família" maxlength="200" enterkeyhint="send">
         <button type="submit" aria-label="Enviar recado"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
       </form>
+      </div>
       <div id="recados"></div>
     </section>
   </main>

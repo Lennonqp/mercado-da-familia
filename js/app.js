@@ -185,11 +185,20 @@
     $("#titulo").textContent = TELAS[tela];
     window.scrollTo({ top: 0 });
     render();
+    marcarGrudado();
   }
   function irPara(nova) {
     if (location.hash.slice(1) === nova) mostrar(nova); else location.hash = nova;
   }
   window.addEventListener("hashchange", () => mostrar(location.hash.slice(1)));
+
+  // sombra no campo fixo quando a página está rolada
+  function marcarGrudado() {
+    const g = document.querySelector(".tela:not([hidden]) .grudado");
+    document.querySelectorAll(".grudado.solto").forEach(x => { if (x !== g) x.classList.remove("solto"); });
+    if (g) g.classList.toggle("solto", g.getBoundingClientRect().top <= 1 && window.scrollY > 40);
+  }
+  window.addEventListener("scroll", marcarGrudado, { passive: true });
   document.querySelectorAll("[data-ir]").forEach(b => b.addEventListener("click", () => irPara(b.dataset.ir)));
   $("#voltar").addEventListener("click", () => irPara("mais"));
 
@@ -223,6 +232,7 @@
     if (tela === "carrinho" && carrinho.length) { fixo.hidden = false; fixo.innerHTML = `<button class="bt" data-acao="finalizar">${IC.casa}Finalizar compra</button>`; }
     else if (tela === "gastos") { fixo.hidden = false; fixo.innerHTML = `<button class="bt" data-acao="novo-gasto">${IC.mais}Registrar gasto</button>`; }
     else { fixo.hidden = true; fixo.innerHTML = ""; }
+    document.body.classList.toggle("com-acao", !fixo.hidden);
 
     // não redesenha a tela enquanto alguém digita num campo dela
     const foco = document.activeElement;
@@ -648,6 +658,7 @@
       case "pegar": {
         const c = compra(); if (!c || c.status === "carrinho") return;
         const linha = el.closest(".linha"); if (linha) linha.classList.add("saindo");
+        try { if (navigator.vibrate) navigator.vibrate(12); } catch (erro) { /* sem vibração */ }
         setTimeout(async () => {
           if (await seguro(banco.alterar("compras", id, { status: "carrinho" }))) toast(`${c.nome} no carrinho`, () => seguro(banco.alterar("compras", id, { status: "lista" })));
           else if (linha) linha.classList.remove("saindo");
